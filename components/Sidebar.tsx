@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Package, Users, Activity, FileText, Info, Menu, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Activity, FileText, Info, X, ShieldCheck, LogOut } from 'lucide-react';
 import { PageView } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,91 +21,88 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
   ];
 
   return (
-    <motion.div 
-      animate={{ width: isOpen ? 280 : 80 }}
-      transition={{ duration: 0.3, type: 'spring', stiffness: 100 }}
-      className="h-screen bg-royal-950 text-white flex flex-col shadow-2xl sticky top-0 z-40 print:hidden"
-    >
-      {/* Header */}
-      <div className="p-4 flex items-center justify-between border-b border-royal-800/50">
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 overflow-hidden whitespace-nowrap"
-                >
-                    <div className="bg-white p-1.5 rounded-lg">
-                        <ShieldCheck className="w-6 h-6 text-royal-800" />
-                    </div>
-                    <div>
-                        <h1 className="font-bold text-lg leading-tight">إدارة الجودة</h1>
-                        <p className="text-xs text-royal-200">نظام TQM المتكامل</p>
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
-        <button 
-          onClick={toggleSidebar}
-          className="p-2 hover:bg-royal-800 rounded-lg transition-colors"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-      </div>
+    <>
+      {/* Backdrop Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={toggleSidebar}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Menu */}
-      <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-        {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentView === item.id;
-            return (
-                <button
-                    key={item.id}
-                    onClick={() => setCurrentView(item.id as PageView)}
-                    className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-300 relative group
-                        ${isActive 
-                            ? 'bg-royal-700 text-white shadow-lg shadow-royal-900/50' 
-                            : 'text-royal-100 hover:bg-royal-900 hover:text-white'
-                        }`}
-                >
-                    <Icon className={`w-6 h-6 min-w-[24px] ${isActive ? 'text-white' : 'text-royal-300 group-hover:text-white'}`} />
-                    
-                    <AnimatePresence>
-                        {isOpen && (
-                            <motion.span 
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -10 }}
-                                className="font-medium whitespace-nowrap"
-                            >
-                                {item.label}
-                            </motion.span>
-                        )}
-                    </AnimatePresence>
-
-                    {isActive && (
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full" />
-                    )}
-                </button>
-            )
-        })}
-      </nav>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-royal-800/50">
-        <div className={`flex items-center gap-3 ${isOpen ? 'justify-start' : 'justify-center'}`}>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-royal-500 to-cyan-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                M
-            </div>
-            {isOpen && (
-                <div className="overflow-hidden">
-                    <p className="font-bold text-sm truncate">المدير العام</p>
-                    <p className="text-xs text-royal-300 truncate">متصل الآن</p>
-                </div>
-            )}
+      {/* Sidebar Drawer */}
+      <motion.div 
+        initial={{ x: '100%' }}
+        animate={{ x: isOpen ? 0 : '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed top-0 right-0 h-screen w-[280px] bg-royal-950 text-white flex flex-col shadow-2xl z-50 print:hidden"
+      >
+        {/* Header */}
+        <div className="p-6 flex items-center justify-between border-b border-royal-800/50">
+          <div className="flex items-center gap-3">
+              <div className="bg-white p-1.5 rounded-lg">
+                  <ShieldCheck className="w-6 h-6 text-royal-800" />
+              </div>
+              <div>
+                  <h1 className="font-bold text-lg leading-tight">إدارة الجودة</h1>
+                  <p className="text-xs text-royal-200">نظام TQM المتكامل</p>
+              </div>
+          </div>
+          <button 
+            onClick={toggleSidebar}
+            className="p-1 hover:bg-royal-800 rounded-lg transition-colors text-royal-200 hover:text-white"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
-      </div>
-    </motion.div>
+
+        {/* Menu */}
+        <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+          {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentView === item.id;
+              return (
+                  <button
+                      key={item.id}
+                      onClick={() => {
+                        setCurrentView(item.id as PageView);
+                        toggleSidebar(); // Auto close on mobile/drawer mode
+                      }}
+                      className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-300 relative group
+                          ${isActive 
+                              ? 'bg-royal-700 text-white shadow-lg shadow-royal-900/50' 
+                              : 'text-royal-100 hover:bg-royal-900 hover:text-white'
+                          }`}
+                  >
+                      <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-royal-300 group-hover:text-white'}`} />
+                      <span className="font-medium">{item.label}</span>
+
+                      {isActive && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full" />
+                      )}
+                  </button>
+              )
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-royal-800/50">
+          <div className="flex items-center gap-3 bg-royal-900/50 p-3 rounded-xl">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-royal-500 to-cyan-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  M
+              </div>
+              <div className="overflow-hidden">
+                  <p className="font-bold text-sm truncate">المدير العام</p>
+                  <p className="text-xs text-royal-300 truncate">متصل الآن</p>
+              </div>
+          </div>
+        </div>
+      </motion.div>
+    </>
   );
 };

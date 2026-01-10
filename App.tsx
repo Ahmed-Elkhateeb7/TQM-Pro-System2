@@ -9,7 +9,7 @@ import { About } from './components/About';
 import { PasswordModal } from './components/PasswordModal';
 import { PageView, Product, Employee, DocumentFile, KPIData } from './types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User } from 'lucide-react';
+import { User, Menu } from 'lucide-react';
 
 // Mock Data
 const INITIAL_PRODUCTS: Product[] = [
@@ -41,7 +41,7 @@ const INITIAL_KPI_DATA: KPIData[] = [
 
 function App() {
   const [currentView, setCurrentView] = useState<PageView>('dashboard');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Data State
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -108,19 +108,29 @@ function App() {
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
       
-      <main className="flex-1 p-6 lg:p-10 overflow-x-hidden transition-all duration-300">
+      <main className="flex-1 p-6 lg:p-10 w-full">
         <header className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-          <div>
-            <h1 className="text-3xl font-black text-gray-900">
-              {currentView === 'dashboard' && 'لوحة القيادة المركزية'}
-              {currentView === 'products' && 'سجل المنتجات'}
-              {currentView === 'team' && 'فريق العمل'}
-              {currentView === 'kpi' && 'تحليلات الأداء'}
-              {currentView === 'documents' && 'الأرشيف الرقمي'}
-              {currentView === 'about' && 'معلومات النظام'}
-            </h1>
-            <p className="text-gray-500 mt-1 text-sm">تاريخ اليوم: {new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <div className="flex items-center gap-4">
+            <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:text-royal-800 transition-all shadow-sm active:scale-95"
+                title="القائمة الرئيسية"
+            >
+                <Menu className="w-6 h-6" />
+            </button>
+            <div>
+                <h1 className="text-3xl font-black text-gray-900 leading-tight">
+                {currentView === 'dashboard' && 'لوحة القيادة المركزية'}
+                {currentView === 'products' && 'سجل المنتجات'}
+                {currentView === 'team' && 'فريق العمل'}
+                {currentView === 'kpi' && 'تحليلات الأداء'}
+                {currentView === 'documents' && 'الأرشيف الرقمي'}
+                {currentView === 'about' && 'معلومات النظام'}
+                </h1>
+                <p className="text-gray-500 mt-1 text-sm">تاريخ اليوم: {new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
           </div>
+          
           <div className="flex items-center gap-3">
              <div className="w-12 h-12 rounded-full bg-royal-800 text-white flex items-center justify-center font-bold text-xl border-4 border-white shadow-lg">
                 <User className="w-6 h-6" />
