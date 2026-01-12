@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { LayoutDashboard, Package, Users, Activity, FileText, Info, X, ShieldCheck, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Activity, FileText, Info, X, ShieldCheck, Database as DbIcon } from 'lucide-react';
 import { PageView } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,12 +18,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
     { id: 'team', label: 'فريق الجودة', icon: Users },
     { id: 'kpi', label: 'مؤشرات الأداء', icon: Activity },
     { id: 'documents', label: 'ملفات الجودة', icon: FileText },
+    { id: 'database', label: 'قاعدة البيانات', icon: DbIcon },
     { id: 'about', label: 'عن التطبيق', icon: Info },
   ];
 
   return (
     <>
-      {/* Backdrop Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -35,14 +36,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
         )}
       </AnimatePresence>
 
-      {/* Sidebar Drawer */}
       <motion.div 
         initial={{ x: '100%' }}
         animate={{ x: isOpen ? 0 : '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="fixed top-0 right-0 h-screen w-[280px] bg-royal-950 text-white flex flex-col shadow-2xl z-50 print:hidden"
       >
-        {/* Header */}
         <div className="p-6 flex items-center justify-between border-b border-royal-800/50">
           <div className="flex items-center gap-3">
               <div className="bg-white p-1.5 rounded-lg">
@@ -61,7 +60,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
           </button>
         </div>
 
-        {/* Menu */}
         <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
           {menuItems.map((item) => {
               const Icon = item.icon;
@@ -71,7 +69,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
                       key={item.id}
                       onClick={() => {
                         setCurrentView(item.id as PageView);
-                        toggleSidebar(); // Auto close on mobile/drawer mode
+                        toggleSidebar();
                       }}
                       className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all duration-300 relative group
                           ${isActive 
@@ -90,7 +88,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, i
           })}
         </nav>
 
-        {/* Footer */}
         <div className="p-4 border-t border-royal-800/50">
           <div className="flex items-center gap-3 bg-royal-900/50 p-3 rounded-xl">
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-royal-500 to-cyan-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">

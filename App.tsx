@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
@@ -6,6 +7,7 @@ import { Team } from './components/Team';
 import { KPIs } from './components/KPIs';
 import { Documents } from './components/Documents';
 import { About } from './components/About';
+import { Database } from './components/Database';
 import { PasswordModal } from './components/PasswordModal';
 import { PageView, Product, Employee, DocumentFile, KPIData } from './types';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -43,11 +45,29 @@ function App() {
   const [currentView, setCurrentView] = useState<PageView>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Data State
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [team, setTeam] = useState<Employee[]>(INITIAL_TEAM);
-  const [documents, setDocuments] = useState<DocumentFile[]>(INITIAL_DOCS);
-  const [kpiData, setKpiData] = useState<KPIData[]>(INITIAL_KPI_DATA);
+  // Data State - Initialize from LocalStorage if available
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('tqm_products');
+    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+  });
+  const [team, setTeam] = useState<Employee[]>(() => {
+    const saved = localStorage.getItem('tqm_team');
+    return saved ? JSON.parse(saved) : INITIAL_TEAM;
+  });
+  const [documents, setDocuments] = useState<DocumentFile[]>(() => {
+    const saved = localStorage.getItem('tqm_documents');
+    return saved ? JSON.parse(saved) : INITIAL_DOCS;
+  });
+  const [kpiData, setKpiData] = useState<KPIData[]>(() => {
+    const saved = localStorage.getItem('tqm_kpiData');
+    return saved ? JSON.parse(saved) : INITIAL_KPI_DATA;
+  });
+
+  // Sync with LocalStorage on change
+  useEffect(() => localStorage.setItem('tqm_products', JSON.stringify(products)), [products]);
+  useEffect(() => localStorage.setItem('tqm_team', JSON.stringify(team)), [team]);
+  useEffect(() => localStorage.setItem('tqm_documents', JSON.stringify(documents)), [documents]);
+  useEffect(() => localStorage.setItem('tqm_kpiData', JSON.stringify(kpiData)), [kpiData]);
 
   // Security State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -65,19 +85,27 @@ function App() {
     }
   };
 
-  // Enhanced Print Handler for PDF Download
+  const handleImportData = (fullData: any) => {
+    if (fullData.products) setProducts(fullData.products);
+    if (fullData.team) setTeam(fullData.team);
+    if (fullData.documents) setDocuments(fullData.documents);
+    if (fullData.kpiData) setKpiData(fullData.kpiData);
+  };
+
+  const handleResetData = () => {
+    setProducts(INITIAL_PRODUCTS);
+    setTeam(INITIAL_TEAM);
+    setDocuments(INITIAL_DOCS);
+    setKpiData(INITIAL_KPI_DATA);
+    setCurrentView('dashboard');
+  };
+
   const handlePrintReport = () => {
     const originalTitle = document.title;
-    // Set a professional filename for the PDF download
-    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); // DD-MM-YYYY
+    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-');
     document.title = `TQM-Report-${dateStr}`;
-    
     window.print();
-    
-    // Restore original title
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 1000);
+    setTimeout(() => { document.title = originalTitle; }, 1000);
   };
 
   const renderContent = () => {
@@ -92,6 +120,13 @@ function App() {
         return <KPIs data={kpiData} setData={setKpiData} requestAuth={requestAuth} />;
       case 'documents':
         return <Documents documents={documents} setDocuments={setDocuments} requestAuth={requestAuth} />;
+      case 'database':
+        return <Database 
+          data={{ products, team, documents, kpiData }} 
+          onImport={handleImportData} 
+          onReset={handleResetData}
+          requestAuth={requestAuth}
+        />;
       case 'about':
         return <About />;
       default:
@@ -125,6 +160,7 @@ function App() {
                 {currentView === 'team' && 'فريق العمل'}
                 {currentView === 'kpi' && 'تحليلات الأداء'}
                 {currentView === 'documents' && 'الأرشيف الرقمي'}
+                {currentView === 'database' && 'إدارة البيانات'}
                 {currentView === 'about' && 'معلومات النظام'}
                 </h1>
                 <p className="text-gray-500 mt-1 text-sm">تاريخ اليوم: {new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

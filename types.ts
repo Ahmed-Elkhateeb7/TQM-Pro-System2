@@ -1,4 +1,5 @@
-export type PageView = 'dashboard' | 'products' | 'team' | 'kpi' | 'documents' | 'about';
+
+export type PageView = 'dashboard' | 'products' | 'team' | 'kpi' | 'documents' | 'database' | 'about';
 
 export interface Product {
   id: string;
