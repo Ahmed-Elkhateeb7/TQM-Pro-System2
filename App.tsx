@@ -33,12 +33,22 @@ const INITIAL_DOCS: DocumentFile[] = [
 ];
 
 const INITIAL_KPI_DATA: KPIData[] = [
-  { month: 'يناير', qualityRate: 92, defects: 12 },
-  { month: 'فبراير', qualityRate: 94, defects: 8 },
-  { month: 'مارس', qualityRate: 89, defects: 15 },
-  { month: 'أبريل', qualityRate: 96, defects: 5 },
-  { month: 'مايو', qualityRate: 95, defects: 7 },
-  { month: 'يونيو', qualityRate: 98, defects: 2 },
+  { 
+    month: 'يناير', qualityRate: 92, defects: 12,
+    reservedBlowPieces: 450, reservedBlowWeight: 112.5,
+    reservedInjectionPieces: 320, reservedInjectionWeight: 64,
+    scrappedPieces: 85, scrappedWeight: 21.2,
+    ncrShift1: 2, ncrShift2: 4, ncrShift3: 1,
+    totalSupplied: 15000, totalReturned: 150, totalComplaints: 3
+  },
+  { 
+    month: 'فبراير', qualityRate: 94, defects: 8,
+    reservedBlowPieces: 380, reservedBlowWeight: 95,
+    reservedInjectionPieces: 210, reservedInjectionWeight: 42,
+    scrappedPieces: 60, scrappedWeight: 15,
+    ncrShift1: 1, ncrShift2: 2, ncrShift3: 2,
+    totalSupplied: 18000, totalReturned: 110, totalComplaints: 1
+  }
 ];
 
 function App() {

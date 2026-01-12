@@ -33,4 +33,19 @@ export interface KPIData {
   month: string;
   qualityRate: number;
   defects: number;
+  // New Production Metrics
+  reservedBlowPieces: number;
+  reservedBlowWeight: number;
+  reservedInjectionPieces: number;
+  reservedInjectionWeight: number;
+  scrappedPieces: number;
+  scrappedWeight: number;
+  // Non-Conformance Reports per Shift
+  ncrShift1: number;
+  ncrShift2: number;
+  ncrShift3: number;
+  // Customer & Logistics Metrics
+  totalSupplied: number;
+  totalReturned: number;
+  totalComplaints: number;
 }
