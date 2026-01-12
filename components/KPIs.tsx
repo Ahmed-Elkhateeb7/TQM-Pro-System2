@@ -3,11 +3,11 @@ import React, { useState } from 'react';
 import { KPIData } from '../types';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  BarChart, Bar, Legend, LineChart, Line, ComposedChart, Cell
+  BarChart, Bar, Legend, LineChart, Line, ComposedChart 
 } from 'recharts';
 import { 
   FileSpreadsheet, Plus, X, Boxes, Trash2, ShoppingCart, 
-  TrendingUp, ShieldCheck, Activity, History 
+  TrendingUp, ShieldCheck, Activity, History, MessageSquareWarning 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -104,26 +104,58 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
         </div>
       </div>
 
-      {/* 1. Logistics Trend - Refined Bar Chart */}
-      <ChartCard title="إحصائيات التوريد والشكاوى السنوية" icon={ShoppingCart} color="bg-emerald-500">
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="month" fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} dy={10} />
-              <YAxis fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
-              <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold' }} />
-              <Bar dataKey="totalSupplied" name="الكمية الموردة" fill="#0ea5e9" radius={[6, 6, 0, 0]} barSize={25} />
-              <Bar dataKey="totalReturned" name="المرتجعات" fill="#ef4444" radius={[6, 6, 0, 0]} barSize={25} />
-              <Bar dataKey="totalComplaints" name="الشكاوى" fill="#f59e0b" radius={[6, 6, 0, 0]} barSize={25} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </ChartCard>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* 1. Logistics Trend - Refined Bar Chart */}
+        <ChartCard title="إحصائيات التوريد والمرتجعات" icon={ShoppingCart} color="bg-emerald-500">
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="month" fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
+                <YAxis fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
+                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold' }} />
+                <Bar dataKey="totalSupplied" name="الكمية الموردة" fill="#0ea5e9" radius={[6, 6, 0, 0]} barSize={25} />
+                <Bar dataKey="totalReturned" name="المرتجعات" fill="#ef4444" radius={[6, 6, 0, 0]} barSize={25} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartCard>
+
+        {/* 2. Customer Complaints Trend */}
+        <ChartCard title="مؤشر شكاوى العملاء" icon={MessageSquareWarning} color="bg-amber-500">
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data}>
+                <defs>
+                  <linearGradient id="gradComplaints" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="month" fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
+                <YAxis fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area 
+                  type="monotone" 
+                  dataKey="totalComplaints" 
+                  name="إجمالي الشكاوى" 
+                  stroke="#f59e0b" 
+                  strokeWidth={4} 
+                  fillOpacity={1} 
+                  fill="url(#gradComplaints)" 
+                  dot={{ r: 6, fill: '#f59e0b', strokeWidth: 3, stroke: '#fff' }}
+                  activeDot={{ r: 8 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </ChartCard>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* 2. Production Trend - Elegant Area Chart */}
+        {/* 3. Production Trend */}
         <ChartCard title="تطور مخزون المحجوز (سنوياً)" icon={Boxes} color="bg-royal-500">
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -150,7 +182,7 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
           </div>
         </ChartCard>
 
-        {/* 3. Waste Analysis - Modern Composed Chart */}
+        {/* 4. Waste Analysis */}
         <ChartCard title="تحليل فاقد الهالك (سنوياً)" icon={Trash2} color="bg-rose-500">
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -168,25 +200,25 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
         </ChartCard>
       </div>
 
-      {/* 4. Shift Quality - Step Line Chart */}
-      <ChartCard title="مستوى تقارير NCR حسب الورادي" icon={ShieldCheck} color="bg-amber-500">
+      {/* 5. Shift Quality - Clustered Column Chart (Updated from Line to Clustered Bar/Column) */}
+      <ChartCard title="مستوى تقارير NCR حسب الورادي" icon={ShieldCheck} color="bg-royal-800">
         <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
+            <BarChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }} barGap={8}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis dataKey="month" fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
               <YAxis fontSize={12} fontWeight={700} stroke="#64748b" axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend iconType="circle" />
-              <Line type="monotone" dataKey="ncrShift1" name="وردية أ" stroke="#0284c7" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="ncrShift2" name="وردية ب" stroke="#ef4444" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 8 }} />
-              <Line type="monotone" dataKey="ncrShift3" name="وردية ج" stroke="#f59e0b" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 8 }} />
-            </LineChart>
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc' }} />
+              <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+              <Bar dataKey="ncrShift1" name="وردية أ" fill="#0284c7" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="ncrShift2" name="وردية ب" fill="#ef4444" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="ncrShift3" name="وردية ج" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </ChartCard>
 
-      {/* 5. Main Quality - Premium Area Chart */}
+      {/* 6. Main Quality - Premium Area Chart */}
       <ChartCard title="مؤشر الجودة العام للمصنع" icon={Activity} color="bg-royal-800">
         <div className="h-96 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -216,7 +248,7 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
         </div>
       </ChartCard>
 
-      {/* Modal - Redesigned slightly for consistency */}
+      {/* Modal remains unchanged */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto border border-slate-200">
@@ -230,7 +262,6 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
             </div>
             
             <form onSubmit={handleSubmit} className="space-y-10">
-                {/* Form Sections */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="space-y-2">
                         <label className="text-sm font-black text-slate-600 mr-2 uppercase tracking-wide">اسم الشهر</label>
@@ -273,6 +304,15 @@ export const KPIs: React.FC<KPIProps> = ({ data, setData, requestAuth }) => {
                             <input type="number" placeholder="وردية ب" onChange={(e) => setNewData({...newData, ncrShift2: Number(e.target.value)})} className="px-3 py-3 rounded-xl bg-white border-white outline-none text-center" />
                             <input type="number" placeholder="وردية ج" onChange={(e) => setNewData({...newData, ncrShift3: Number(e.target.value)})} className="px-3 py-3 rounded-xl bg-white border-white outline-none text-center" />
                         </div>
+                    </div>
+                </div>
+
+                <div className="bg-emerald-50/50 p-8 rounded-3xl border border-emerald-100">
+                    <h4 className="font-black text-emerald-900 mb-6 flex items-center gap-2"><ShoppingCart className="w-5 h-5" /> بيانات التوريد والشكاوى</h4>
+                    <div className="grid grid-cols-3 gap-6">
+                        <input type="number" placeholder="إجمالي المورد" onChange={(e) => setNewData({...newData, totalSupplied: Number(e.target.value)})} className="px-4 py-3 rounded-xl bg-white border-white outline-none" />
+                        <input type="number" placeholder="إجمالي المرتجع" onChange={(e) => setNewData({...newData, totalReturned: Number(e.target.value)})} className="px-4 py-3 rounded-xl bg-white border-white outline-none" />
+                        <input type="number" placeholder="عدد الشكاوى" onChange={(e) => setNewData({...newData, totalComplaints: Number(e.target.value)})} className="px-4 py-3 rounded-xl bg-white border-white outline-none" />
                     </div>
                 </div>
 
